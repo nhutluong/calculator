@@ -50,22 +50,22 @@ class Stack {
     }//end function
 }//end class
 
-function ConvertInfixToPostfix(infixBuffer) {
+function ConvertInfixToPostfix(tempOutput) {
     var priority = 0;
-    var postfixBuffer = "";
-    const stringArray = infixBuffer.split(" ");
+    var tempPostFix = "";
+    const stringArray = tempOutput.split(" ");
 
-    let stack1 = new Stack();
+    let stack = new Stack();
 
     for (var index = 0; index < stringArray.length; index++) {
         var operator = stringArray[index];
 
         if (operator == "+" || operator == "-" || operator == "*" || operator == "/") {
             //check precedence
-            if (stack1.getLength() <= 0) {
-                stack1.push(operator)
+            if (stack.getLength() <= 0) {
+                stack.push(operator)
             } else {
-                if (stack1.peek() == "*" || stack1.peek() == "/") {
+                if (stack.peek() == "*" || stack.peek() == "/") {
                     priority = 1;
                 } else {
                     priority = 0;
@@ -73,46 +73,46 @@ function ConvertInfixToPostfix(infixBuffer) {
 
                 if (priority == 1) {
                     if (operator == "+" || operator == "-") {
-                        postfixBuffer += stack1.pop() + " ";
+                        tempPostFix += stack.pop() + " ";
                         index--;
                     } else { // Same
-                        postfixBuffer += stack1.pop() + " ";
+                        tempPostFix += stack.pop() + " ";
                         index--;
                     }//end if
                 } else {
                     if (operator == "+" || operator == "-") {
-                        postfixBuffer += stack1.pop() + " ";
-                        stack1.push(operator);
+                        tempPostFix += stack.pop() + " ";
+                        stack.push(operator);
                     } else {
-                        stack1.push(operator);
+                        stack.push(operator);
                     }//end if
                 }//end if
             }//end if
         } else {
-            if (postfixBuffer == "") {
-                postfixBuffer += operator + " ";
+            if (tempPostFix == "") {
+                tempPostFix += operator + " ";
             } else {
 
                 if (index == stringArray.length) {
-                    postfixBuffer += operator;
+                    tempPostFix += operator;
                 } else {
-                    postfixBuffer += operator + " ";
+                    tempPostFix += operator + " ";
                 }//end if
             }//end if
         }//end if
     }//end for
 
-    var length = stack1.getLength();
+    var length = stack.getLength();
 
     for (var index2 = 0; index2 < length; index2++) {
-        if (stack1.getLength() == 1) {
-            postfixBuffer += stack1.pop();
+        if (stack.getLength() == 1) {
+            tempPostFix += stack.pop();
         } else {
-            postfixBuffer += stack1.pop() + " ";
+            tempPostFix += stack.pop() + " ";
         }//end if  
     }//end for
 
-    return postfixBuffer;
+    return tempPostFix;
 }//end function
 
 var newStack = new Stack();
@@ -122,56 +122,53 @@ function SolveProblem(inputString) {
     var stringArray = inputString.split(' ');
 
     for (var index = 0; index < stringArray.length; index++) {
-        //as we walk the array check to see if the current index is an operator or operand
-        if (IsOperator(stringArray[index]) == true) {//if operator perform the required operation
+        //check if the current index is an operator or operand
+        if (IsOperator(stringArray[index]) == true) {//if operator perform the operation
             Operate(stringArray[index]);
 
         } else {//if operand add to stack
             newStack.push(stringArray[index]);
-            //lsbListBox.Items.Add("After Push: " + newStack.ToString());
+            
         }//end if               
     }//end for
-    //return final result
+    //return result
     return newStack.peek();
 }//end function
 
-function isOperator(symbol) {
-    if (symbol == "+" || symbol == "-" || symbol == "*" || symbol == "/") {
+function isOperator(operator) {
+    if (operator == "+" || operator == "-" || operator == "*" || operator == "/") {
         return true;
     } else {
         return false;
     }//end if 
 }//end function
 
-function Evaluate(symbol) {
-    //pop the first 2 operands from the stack and store their values to variables                                 
-    var num2 = newStack.pop();
+function Evaluate(operator) {
+    //pop the first 2 operands from top of stack and store values                                
     var num1 = newStack.pop();
+    var num2 = newStack.pop();
 
-    //depending on the operator call the required method and push result onto stack
-    if (symbol == "+") {
+    //if/else if to check operator, call the method and push result onto stack
+    if (operator == "+") {
 
         var result = Add(num1, num2);
         newStack.push(result.toString());
-        //lsbListBox.Items.Add("After Addition: " + newStack.ToString());
-
-    } else if (symbol == "-") {
+        
+    } else if (operator == "-") {
 
         var result = Subtract(num1, num2);
         newStack.push(result.toString());
-        //lsbListBox.Items.Add("After Subtraction: " + newStack.ToString());
-
-    } else if (symbol == "*") {
+        
+    } else if (operator == "*") {
 
         var result = Multiply(num1, num2);
         newStack.push(result.toString());
-        //lsbListBox.Items.Add("After Multiplication: " + newStack.ToString());
-
-    } else if (symbol == "/") {
+        
+    } else if (operator == "/") {
 
         var result = Divide(num1, num2);
         newStack.push(result.toString());
-        //lsbListBox.Items.Add("After Division: " + newStack.ToString());
+        
     }//end if                               
 }//end function
 
@@ -189,6 +186,7 @@ function Divide(num1, num2) {
 function Multiply(num1, num2) {
     return parseFloat(num1) * parseFloat(num2);
 }//end function
+
 //CREATE INSTANCE OF THE CLASS THIS INSTANCE IS GLOBAL
 webCalculator = new Calculator;
 
